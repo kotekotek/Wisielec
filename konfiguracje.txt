@@ -1,0 +1,2 @@
+Maksymalna długość słowa:
+10
