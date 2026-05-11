@@ -6,6 +6,8 @@ source ./grafika.bash
 {
     read -r NAGLOWEK
     read -r DLUGOSC_HASLA
+    read -r NAGLOWEK
+    read -r ILOSC_PROB
 } < konfiguracje.txt
 
 HASLO=$(shuf -n 1 /usr/share/dict/polish | tr '[:upper:]' '[:lower:]')
@@ -21,13 +23,14 @@ HASLO_TAB=( $(echo $HASLO | sed 's/./& /g') )
 WIDOK=( $(echo $HASLO | sed 's/./  ____  /g') )
 nr=0
 licznik=0
+ODPADNIETE=()
 while true; do
-
-
+    ((pozostale_proby=$ILOSC_PROB-$nr))
+    TEKST_ODPADY="${ODPADNIETE[*]}"
     LITERA=$(zenity --entry \
         --title="Wisielec" \
         --width=400 --height=500 \
-        --text="${Etapy[$nr]}\n\n\n\nSłowo: ${WIDOK[*]}\n\n\n\nPodaj literę:" \
+        --text="Pozostałe próby: $pozostale_proby\n\n${Etapy[$nr]}\n\n\n\nSłowo: ${WIDOK[*]}\n\n\n\nBrak: $TEKST_ODPADY\n\n\nPodaj literę:" \
         )
 
     if [ $? -ne 0 ]; then
@@ -41,7 +44,12 @@ while true; do
             ((licznik++))
         fi
     done
-    if [[ "$nr" -ne 6 && "$licznik" == 0 ]]; then
+
+    if [[ ! " ${ODPADNIETE[*]} " =~ " $LITERA " && "$licznik" == 0 ]]; then
+        ODPADNIETE+=("$LITERA")
+    fi
+
+    if (( "$nr" != "$ILOSC_PROB" && "$licznik" == 0 )); then
         ((nr++))
         
     fi
@@ -51,8 +59,8 @@ while true; do
         zenity --info --text="\nWYGRANA!             \nHasło: $HASLO"
         break
     fi
-    if (( nr >= 6 )); then
-        zenity --error --text="\nPRZEGRANA! \nNiedgatnięte hasło: $HASLO"
+    if (( nr >= 9 )); then
+        zenity --error --text="\nPRZEGRANA! \nNieodgatnięte hasło: $HASLO"
         break
     fi
 done
