@@ -1,4 +1,4 @@
 Maksymalna długość słowa:
 10
-Ilość prób, zalecana 6, 9 lub
-9
+Ilość prób, zalecana 6, 9 lub 30
+30
